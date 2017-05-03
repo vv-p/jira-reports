@@ -25,5 +25,10 @@ def fix_emoji(value):
 
 
 def cleanup(value):
-    value = re.sub('\{code.*?\}.*?\{code\}', ' ', value, 0, re.S)
+    """
+    Remove {code}...{/code} and {noformat}...{noformat} fragments from worklog comment
+    :param value: worklog comment text
+    :return: cleaned worklog comment text
+    """
+    value = re.sub('\{code.*?\}.*?\{.*?code\}', ' ', value, 0, re.S)
     return re.sub('\{noformat.*?\}.*?\{noformat\}', ' ', value, 0, re.S)
