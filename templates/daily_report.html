@@ -1,0 +1,21 @@
+<html>
+<head>
+</head>
+<body>
+{% for employee, worklogs in report.iteritems() %}
+    <h3>{{ employee }}</h3>
+    <div style="margin-left: 30px;">
+        {% for worklog in worklogs %}
+
+                <h4>&#9679; {{ worklog[2] }} <a href="https://jira.mail.ru/browse/{{ worklog[0] }}">{{ worklog[0] }}</a> - {{ worklog[1] }}</h4>
+                <pre>{{ worklog[3] | cleanup | fix_emoji }}</pre>
+
+        {% endfor %}
+    </div>
+    <hr />
+{% endfor %}
+<br />
+<br />
+<p>Всего: {{ total }}</p>
+</body>
+</html>

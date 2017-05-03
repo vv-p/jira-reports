@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <table>
+    <tr>
+        <th>#</th>
+        <th>Таск</th>
+        <th>Описание</th>
+        <th>Автор</th>
+        <th>Тестировщик</th>
+    </tr>
+    {% for key, task in tasks.iteritems() %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="https://jira.mail.ru/browse/{{ key }}">{{ key }}</a></td>
+            <td>{{ task.fields.summary }}</td>
+            <td>{{ task.fields.reporter }}</td>
+            <td>{{ task.fields.assignee }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+<br />
+<br />
+<p>* Очерёдность тестирования определяется так:</p>
+<ol>
+    <li>сначала идут критические задачи</li>
+    <li>затем активные баги</li>
+    <li>затем задачи, которые висят более {{ max_age }} {% if max_age == 1%}дня{% else %}дней{% endif %} без движения с момента последнего перехода в тестирование</li>
+<li>затем все остальные задачи ( в этом списке их нет )</li>
+</ol>
+</body>
+</html>

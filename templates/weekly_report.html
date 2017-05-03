@@ -1,0 +1,29 @@
+<html>
+<head>
+</head>
+<body>
+<h3>Графики - <a href="https://confluence.mail.ru/pages/viewpage.action?pageId=99977225">confluence@mail.ru - Тестирование</a></h3>
+<br />
+<h2>Текущий статус:</h2>
+<p><b>Количество открытых тикетов на команде тестирования: {{ testing_issues|length }} ( ↓)</b></p>
+<br />
+<h2>Итоги прошлой недели:</h2>
+<p><b>Протестировано тикетов: {{ tested_issues|length }} ( ↑)</b></p>
+<p><b>Вернулось тикетов с тестирования: {{ returned_issues|length }} ( ↓)</b></p>
+<p><b>Баги на проде: {{ closed_bugs|length }} ( ↓)</b></p>
+<br />
+<h2>Баги на проде:</h2>
+{% for bug in closed_bugs %}
+    <p><a href="{{ jira }}browse/{{ bug.raw['key'] }}">{{ bug.raw['key'] }}</a> {{ bug.fields.summary }}</p>
+{% endfor %}
+<br />
+<h2>Вернулись с тестирования:</h2>
+<h3>Баги клиентсайд</h3>
+<h3>Баги бекенд</h3>
+<h3>Конфликты</h3>
+<h3>Ошибки тестирования</h3>
+{% for issue in returned_issues %}
+    <p><a href="{{ jira }}browse/{{ issue.raw['key'] }}">{{ issue.raw['key'] }}</a> {{ issue.fields.summary }}</p>
+{% endfor %}
+</body>
+</html>

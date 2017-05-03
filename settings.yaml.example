@@ -1,0 +1,31 @@
+jira:
+    url: https://jira.localhost.localdomain/
+    user: stuff@mlocalhost.localdomain
+    pass: 1q2w3e4r
+    project: PRJ
+
+smtp:
+    host: smtp.localhost.localdomain
+    port: 465
+    user: ecstatic_golick@localhost.localdomain
+    pass: r4e3w2q1
+
+team:
+  - mail: mad_bhaskara@localhost.localdomain
+    role: manual
+  - mail: compassionate_pare@localhost.localdomain
+    role: manual
+  - mail: peaceful_shirley@localhost.localdomain
+    role: auto
+  - mail: trusting_minsky@localhost.localdomain
+    role: auto
+  - mail: determined_stallman@localhost.localdomain
+    role: auto
+
+email:
+    from: jira_reports@localhost.localdomain
+    to: serene_newton@localhost.localdomain
+    daily_subject: 'Daily report {}'
+    queue_subject: "Queue report {}"
+    ages_subject: "Ages report"
+    weekly_subject: "Weekly report {} - {}"

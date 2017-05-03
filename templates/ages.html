@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+<body>
+    <table>
+    <tr>
+        <th>Прилетело</th>
+        <th>Остаток</th>
+        <th>Задачи</th>
+    </tr>
+    {% for key, tasks in tasks.iteritems() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td align="center">{{ tasks|length }}</td>
+            <td>{% for task in tasks %}<a href="https://jira.mail.ru/browse/{{ task }}">{{ task }}</a>&nbsp;&nbsp;&nbsp;{% endfor %}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>
