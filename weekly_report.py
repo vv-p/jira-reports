@@ -1,4 +1,3 @@
-#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 import jira
@@ -80,7 +79,7 @@ def get_state_pairs(states):
     :param states: list of states
     :return:
     """
-    for n in xrange(len(states) - 1):
+    for n in range(len(states) - 1):
         yield states[n], states[n+1]
 
 
