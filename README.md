@@ -1,5 +1,7 @@
 ### Описание
 
+**Для запуска используйте Python 3 (я тестировал работу с Python3.6).**
+
 * **daily_report.py** - генерит отчёт по работе за предыдущий рабочий день (в понедельник сгенерит для пятницы) для команды
 * **weekly_report.py** - отчёт по работе за неделю
 * **testing_queue.py** - список задач для команды тестирования на день
@@ -53,12 +55,25 @@ email:
 * Все скрипты поддерживают расширенное логирование, оно включается опцией -v:
 
 ```
-python2.7 daily_report -v
+python3.6 daily_report -v
 ...
 DEBUG:requests.packages.urllib3.connectionpool:https://jira.localhost.localdomain:443 "GET /rest/api/2/issue/PRJ-26013/worklog HTTP/1.1" 200 None
 DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 20-04-2017
 DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 24-04-2017
 DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 25-04-2017
 ...
+```
+
+* Если очень хочется запустить код в Python2.7, нужно поправить руками одно место - в шаблоне
+**templates/testing_queue.html** изменить
+
+```jinja2
+    {% for key, task in tasks.items() %}
+```
+
+на
+
+```jinja2
+    {% for key, task in tasks.iteritems() %}
 ```
 
