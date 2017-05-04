@@ -12,7 +12,7 @@
         <th>Автор</th>
         <th>Тестировщик</th>
     </tr>
-    {% for key, task in tasks.iteritems() %}
+    {% for key, task in tasks.items() %}
         <tr>
             <td>{{ loop.index }}</td>
             <td><a href="https://jira.mail.ru/browse/{{ key }}">{{ key }}</a></td>
