@@ -2,12 +2,21 @@
 
 import os.path
 import yaml
+import logging
 
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'settings.yaml')
 
-with open(CONFIG_PATH, 'r') as fh:
-    config = yaml.load(fh)
+logger = logging.getLogger(__name__)
+
+
+try:
+    with open(CONFIG_PATH, 'r') as fh:
+        config = yaml.load(fh)
+except FileNotFoundError:
+    logging.error('Config file was not found: settings.yaml')
+    logging.error('You must create it first')
+    exit(1)
 
 # Jira settings
 JIRA_URL = config['jira']['url']
