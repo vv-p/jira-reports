@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 try:
-    with open(CONFIG_PATH, 'r') as fh:
+    with open(CONFIG_PATH, 'rb') as fh:
         config = yaml.load(fh)
 except FileNotFoundError:
     logging.error('Config file was not found: settings.yaml')
