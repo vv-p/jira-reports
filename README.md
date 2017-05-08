@@ -12,7 +12,7 @@
 
 > cat settings.yaml
 
-```
+```yaml
 jira:
     url: https://jira.localhost.localdomain/
     user: stuff@mlocalhost.localdomain
