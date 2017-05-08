@@ -64,8 +64,8 @@ DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 25-04-2017
 ...
 ```
 
-* Если очень хочется запустить код в Python2.7, нужно поправить руками одно место - в шаблоне
-**templates/testing_queue.html** изменить
+* Если очень хочется запустить код в Python2.7, нужно заменить в шаблонах руками **items()** на **iteritems()**, например в шаблоне
+**templates/testing_queue.html**:
 
 ```jinja
     {% for key, task in tasks.items() %}
