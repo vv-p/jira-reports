@@ -22,7 +22,7 @@ def get_critical_tasks(j, project, assignees):
             project=project,
             assignees=get_jira_list(assignees),
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
     )
     return critical_tasks
@@ -39,7 +39,7 @@ def get_bugs(j, project, assignees):
             project=project,
             who=get_jira_list(assignees),
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
     )
     return bugs
@@ -67,7 +67,7 @@ def get_old_tasks(j, project, assignees, max_age, max_results):
             who=get_jira_list(assignees),
             max_age=max_age,
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
         expand='changelog',
     )
