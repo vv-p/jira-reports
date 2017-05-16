@@ -10,7 +10,7 @@ import datetime
 
 from main import send_on_email, get_jira_list
 
-PREVIOUS_WEEK = 'startOfDay(-{}), endOfDay(-1)'
+ITERATION = 'startOfDay(-{}), endOfDay(-1)'
 
 
 def render(scope):
@@ -40,7 +40,7 @@ def get_weekly_issues(j, project, assignees, iteration_length):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK.format(iteration_length),
+            period=ITERATION.format(iteration_length),
         ),
         fields='summary',
         expand='changelog',
@@ -66,7 +66,7 @@ def get_tested_issues(j, project, assignees, iteration_length):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK.format(iteration_length),
+            period=ITERATION.format(iteration_length),
         ),
         fields='summary',
         expand='changelog',
@@ -162,7 +162,7 @@ def get_closed_bugs(j, project, assignees, iteration_length):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK.format(iteration_length),
+            period=ITERATION.format(iteration_length),
         ),
         maxResults=settings.MAX_RESULTS,
     )
