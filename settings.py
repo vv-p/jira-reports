@@ -18,6 +18,10 @@ except FileNotFoundError:
     logging.error('You must create it first')
     exit(1)
 
+# Process settings
+ITERATION_LENGTH = config['process']['iteration_length']
+MAX_RESULTS = config['process']['max_search_results']
+
 # Jira settings
 JIRA_URL = config['jira']['url']
 JIRA_USER = config['jira']['user']
