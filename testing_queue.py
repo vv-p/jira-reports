@@ -12,15 +12,14 @@ from main import send_on_email, get_jira_list
 
 
 def get_critical_tasks(j, project, assignees):
+    assignees = get_jira_list(assignees)
+
     critical_tasks = j.search_issues(
         (
-            'project = {project} '
-            'AND Status = Testing '
-            'AND assignee IN ({assignees}) '
-            'AND priority = Критический '
-        ).format(
-            project=project,
-            assignees=get_jira_list(assignees),
+            f'project = {project} '
+            f'AND Status = Testing '
+            f'AND assignee IN ({assignees}) '
+            f'AND priority = Критический '
         ),
         maxResults=500,
         fields='summary,assignee,reporter',
@@ -29,15 +28,14 @@ def get_critical_tasks(j, project, assignees):
 
 
 def get_bugs(j, project, assignees):
+    who = get_jira_list(assignees)
+
     bugs = j.search_issues(
         (
-            'project = {project} '
-            'AND issuetype = Bug '
-            'AND assignee IN ({who}) '
-            'AND status = Testing '
-        ).format(
-            project=project,
-            who=get_jira_list(assignees),
+            f'project = {project} '
+            f'AND issuetype = Bug '
+            f'AND assignee IN ({who}) '
+            f'AND status = Testing '
         ),
         maxResults=500,
         fields='summary,assignee,reporter',
@@ -55,17 +53,14 @@ def get_old_tasks(j, project, assignees, max_age, max_results):
     :param max_results: maximum number of tasks returned
     :return: list of jira tasks
     """
+    who = get_jira_list(assignees)
 
     old_tasks = j.search_issues(
         (
-            'project = {project} '
-            'AND status = Testing '
-            'AND assignee IN ({who}) '
-            'AND status CHANGED TO Testing BEFORE -{max_age}d '
-        ).format(
-            project=project,
-            who=get_jira_list(assignees),
-            max_age=max_age,
+            f'project = {project} '
+            f'AND status = Testing '
+            f'AND assignee IN ({who}) '
+            f'AND status CHANGED TO Testing BEFORE -{max_age}d '
         ),
         maxResults=500,
         fields='summary,assignee,reporter',
@@ -100,7 +95,7 @@ def key(n):
     :param n: int, task number
     :return: str, task key
     """
-    return 'TRG-{}'.format(n)
+    return f'TRG-{n}'
 
 
 def main():
