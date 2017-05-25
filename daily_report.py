@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import jira
 import jinja2
 import sys
