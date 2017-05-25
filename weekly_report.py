@@ -10,7 +10,7 @@ import datetime
 
 from main import send_on_email, get_jira_list
 
-PREVIOUS_WEEK = 'startOfDay(-7), endOfDay(-1)'
+ITERATION = 'startOfDay(-{}), endOfDay(-1)'
 
 
 def render(scope):
@@ -24,13 +24,14 @@ def render(scope):
     return template.render(scope)
 
 
-def get_weekly_issues(j, project, assignees):
+def get_weekly_issues(j, project, assignees, iteration_length):
     """
     Get all issues from Jira where any of testing team members marked as an assignee
     :param j: jira instance to request to
     :param project: project short-name in jira
     :param assignees: team members list
-    :return: list of jira items
+    :param iteration_length: iteration length in days
+    :return: list of jira issues
     """
     weekly_issues = j.search_issues(
         (
@@ -39,22 +40,23 @@ def get_weekly_issues(j, project, assignees):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK,
+            period=ITERATION.format(iteration_length),
         ),
         fields='summary',
         expand='changelog',
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
     )
     return weekly_issues
 
 
-def get_tested_issues(j, project, assignees):
+def get_tested_issues(j, project, assignees, iteration_length):
     """
     Get all issues from Jira where any of testing team members marked as an assignee
     :param j: jira instance to request to
     :param project: project short-name in jira
     :param assignees: team members list
-    :return: list of jira items
+    :param iteration_length: iteration length in days
+    :return: list of jira issues
     """
     weekly_issues = j.search_issues(
         (
@@ -64,11 +66,11 @@ def get_tested_issues(j, project, assignees):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK,
+            period=ITERATION.format(iteration_length),
         ),
         fields='summary',
         expand='changelog',
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
     )
     return weekly_issues
 
@@ -97,16 +99,17 @@ def check_state_history(states):
     return True
 
 
-def get_returned_issues(weekly_issues):
+def get_returned_issues(weekly_issues, iteration_length):
     """
     Get only returned to testing issues
     :param weekly_issues: all jira issues
+    :param iteration_length: iteration length in days
     :return: only returned to testing issues
     """
     logger = logging.getLogger(__name__)
     returned_issues = []
 
-    previous_week_start = datetime.datetime.now() - datetime.timedelta(days=8)
+    previous_week_start = datetime.datetime.now() - datetime.timedelta(days=iteration_length)
     previous_week_end = datetime.datetime.now() - datetime.timedelta(days=1)
 
     for issue in weekly_issues:
@@ -121,7 +124,7 @@ def get_returned_issues(weekly_issues):
                         '%Y-%m-%dT%H:%M:%S.000+0300'
                     )
 
-                    if previous_week_start < history_date < previous_week_end:
+                    if previous_week_start <= history_date <= previous_week_end:
                         logger.debug('Add',
                                      history_date.strftime('%Y-%m-%d'),
                                      item.fromString, 'to',
@@ -141,13 +144,14 @@ def get_returned_issues(weekly_issues):
     return returned_issues
 
 
-def get_closed_bugs(j, project, assignees):
+def get_closed_bugs(j, project, assignees, iteration_length):
     """
     Get bugs closed in last iteration
     :param j: jira instance to request to
     :param project: project short-name in jira
     :param assignees: team members list
-    :return:
+    :param iteration_length: iteration length in days
+    :return: list of jira issues
     """
     closed_bugs = j.search_issues(
         (
@@ -158,14 +162,14 @@ def get_closed_bugs(j, project, assignees):
         ).format(
             project=project,
             assignees=get_jira_list(assignees),
-            period=PREVIOUS_WEEK,
+            period=ITERATION.format(iteration_length),
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
     )
     return closed_bugs
 
 
-def get_testing_issues(j, project, assignees):
+def get_testing_issues(j, project, assignees, **kwargs):
     """
     :param j: jira instance to request to
     :param project: project short-name in jira
@@ -181,7 +185,7 @@ def get_testing_issues(j, project, assignees):
             project=project,
             assignees=get_jira_list(assignees),
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
     )
     return testing_issues
 
@@ -192,8 +196,13 @@ def main():
                         action='store_true',
                         default=False,
                         help='be verbose')
+    parser.add_argument('-l', '--length',
+                        type=int,
+                        default=settings.ITERATION_LENGTH,
+                        help='Iteration length in days (default={})'.format(settings.ITERATION_LENGTH))
 
     args = parser.parse_args()
+    iteration_length = args.length
 
     log_level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig(level=log_level)
@@ -202,11 +211,11 @@ def main():
     smtp_auth = settings.SMTP_USER, settings.SMTP_PASS
 
     today = datetime.datetime.now()
-    one_week_ago = today - datetime.timedelta(days=7)
-    yesterday = today - datetime.timedelta(days=1)
+    iteration_start = today - datetime.timedelta(days=iteration_length)
+    iteration_end = today - datetime.timedelta(days=1)
     report_subject = settings.WEEKLY_SUBJECT.format(
-        one_week_ago.strftime('%d.%m'),
-        yesterday.strftime('%d.%m')
+        iteration_start.strftime('%d.%m'),
+        iteration_end.strftime('%d.%m')
     )
 
     j = jira.JIRA(
@@ -217,19 +226,26 @@ def main():
         )
     )
 
-    weekly_issues = get_weekly_issues(j, settings.JIRA_PROJECT, settings.FUNC)
+    report_query_data = {
+        'j': j,
+        'project': settings.JIRA_PROJECT,
+        'assignees': settings.FUNC,
+        'iteration_length': iteration_length,
+    }
+
+    weekly_issues = get_weekly_issues(**report_query_data)
     logger.info('Got {} weekly issues'.format(len(weekly_issues)))
 
-    tested_issues = get_tested_issues(j, settings.JIRA_PROJECT, settings.FUNC)
+    tested_issues = get_tested_issues(**report_query_data)
     logger.info('Got {} tested issues'.format(len(tested_issues)))
 
-    returned_issues = get_returned_issues(weekly_issues)
+    returned_issues = get_returned_issues(weekly_issues, iteration_length)
     logger.info('Got {} returned issues'.format(len(returned_issues)))
 
-    closed_bugs = get_closed_bugs(j, settings.JIRA_PROJECT, settings.FUNC)
+    closed_bugs = get_closed_bugs(**report_query_data)
     logger.info('Got {} closed bugs'.format(len(closed_bugs)))
 
-    testing_issues = get_testing_issues(j, settings.JIRA_PROJECT, settings.FUNC)
+    testing_issues = get_testing_issues(**report_query_data)
     logger.info('Got {} open tasks'.format(len(testing_issues)))
 
     scope = {

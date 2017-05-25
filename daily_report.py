@@ -35,7 +35,7 @@ def get_issues(j, project, date, authors):
             authors=', '.join('"%s"' % x for x in authors),
         ),
         fields='summary,worklog',
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
     )
     return issues
 

@@ -21,7 +21,7 @@ def get_critical_tasks(j, project, assignees):
             f'AND assignee IN ({assignees}) '
             f'AND priority = Критический '
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
     )
     return critical_tasks
@@ -37,7 +37,7 @@ def get_bugs(j, project, assignees):
             f'AND assignee IN ({who}) '
             f'AND status = Testing '
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
     )
     return bugs
@@ -62,7 +62,7 @@ def get_old_tasks(j, project, assignees, max_age, max_results):
             f'AND assignee IN ({who}) '
             f'AND status CHANGED TO Testing BEFORE -{max_age}d '
         ),
-        maxResults=500,
+        maxResults=settings.MAX_RESULTS,
         fields='summary,assignee,reporter',
         expand='changelog',
     )

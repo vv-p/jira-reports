@@ -13,6 +13,10 @@
 > cat settings.yaml
 
 ```yaml
+process:
+    iteration_length: 7
+    max_search_results: 500
+
 jira:
     url: https://jira.localhost.localdomain/
     user: stuff@mlocalhost.localdomain
