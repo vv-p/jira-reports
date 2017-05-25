@@ -1,6 +1,6 @@
 ### Описание
 
-**Для запуска используйте Python 3 (я тестировал работу с Python3.6).**
+**Для запуска используйте Python 3.6 и выше**
 
 * **daily_report.py** - генерит отчёт по работе за предыдущий рабочий день (в понедельник сгенерит для пятницы) для команды
 * **weekly_report.py** - отчёт по работе за неделю
@@ -67,17 +67,3 @@ DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 24-04-2017
 DEBUG:__main__:Skip worklog in PRJ-26013, it has started date = 25-04-2017
 ...
 ```
-
-* Если очень хочется запустить код в Python2.7, нужно заменить в шаблонах руками **items()** на **iteritems()**, например в шаблоне
-**templates/testing_queue.html**:
-
-```jinja
-    {% for key, task in tasks.items() %}
-```
-
-на
-
-```jinja
-    {% for key, task in tasks.iteritems() %}
-```
-
